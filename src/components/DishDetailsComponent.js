@@ -10,16 +10,11 @@ class DishDetails extends Component {
   render() {
     if (this.props.dish != null) {
       const comments = this.props.dish.comments.map((comment) => {
-        return (<div>
-              <div className="row mb-3">
-                <div className="col-12">{comment.text}</div>
-              </div>
-            <div className="row mb-3">
-              <div className="col-12">-- {comment.author}, {comment.datetime}</div>
-            </div>
-
-            </div>
-
+        return (
+            <li key={comment.id}>
+              {comment.text} <br/><br/>
+              -- {comment.author}, {comment.datetime}<br/><br/>
+            </li>
         );
       })
       return (
@@ -37,7 +32,9 @@ class DishDetails extends Component {
               <div className="row">
                 <div className="col-12"><h3>Comments</h3></div>
               </div>
-              {comments}
+              <ul className="list-unstyled">
+                {comments}
+              </ul>
             </div>
           </div>
       );
