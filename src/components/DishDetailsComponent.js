@@ -12,29 +12,35 @@ class DishDetails extends Component {
       const comments = this.props.dish.comments.map((comment) => {
         return (
             <li key={comment.id}>
-              {comment.text} <br/><br/>
-              -- {comment.author}, {comment.datetime}<br/><br/>
+              <p>{comment.text} </p>
+              <p>-- {comment.author}, {new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit'
+              }).format(Date.parse(comment.datetime))}</p>
             </li>
         );
       })
       return (
-          <div className="row">
-            <div className="col-md-5 m-1">
-              <Card>
-                <CardImg width="100%" src={this.props.dish.image} alt={this.props.dish.name}/>
-                <CardBody>
-                  <CardTitle>{this.props.dish.name}</CardTitle>
-                  <CardText>{this.props.dish.description}</CardText>
-                </CardBody>
-              </Card>
-            </div>
-            <div className="col m-1">
-              <div className="row">
-                <div className="col-12"><h3>Comments</h3></div>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-5 m-1">
+                <Card>
+                  <CardImg width="100%" src={this.props.dish.image} alt={this.props.dish.name}/>
+                  <CardBody>
+                    <CardTitle>{this.props.dish.name}</CardTitle>
+                    <CardText>{this.props.dish.description}</CardText>
+                  </CardBody>
+                </Card>
               </div>
-              <ul className="list-unstyled">
-                {comments}
-              </ul>
+              <div className="col m-1">
+                <div className="row">
+                  <div className="col-12"><h3>Comments</h3></div>
+                </div>
+                <ul className="list-unstyled">
+                  {comments}
+                </ul>
+              </div>
             </div>
           </div>
       );
