@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col} from "reactstrap";
+import {Breadcrumb, BreadcrumbItem, Button, Form, FormGroup, Label, Input, Col, FormFeedback} from "reactstrap";
 import {Link} from "react-router-dom";
 
 class Contact extends Component {
@@ -12,19 +12,26 @@ class Contact extends Component {
             email: '',
             agree: false,
             contactType: 'Tel.',
-            message: ''
-        }
+            message: '',
+            touched: {
+                firstname: false,
+                lastname: false,
+                telnum: false,
+                email: false,
+            }
+        };
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
     }
 
     handleInputChange(event) {
-      const target = event.target;
-      const value = target.type === "checkbox" ? target.checked : target.value;
-      const name = target.name;
-      this.setState({
-        [name]: value
-      })
+        const target = event.target;
+        const value = target.type === "checkbox" ? target.checked : target.value;
+        const name = target.name;
+        this.setState({
+            [name]: value
+        })
     }
 
     handleSubmit(event) {
@@ -33,7 +40,42 @@ class Contact extends Component {
         event.preventDefault();
     }
 
+    handleBlur = (field) => (evt) => {
+        this.setState({
+            touched: {...this.state.touched, [field]: true}
+        })
+    };
+
+    validate(firstname, lastname, telnum, email) {
+        const errors = {
+            firstname: '',
+            lastname: '',
+            telnum: '',
+            email: '',
+        };
+        if (this.state.touched.firstname && firstname.length < 3) {
+            errors.firstname = 'First name should be >= 3 characters';
+        } else if (this.state.touched.firstname && firstname.length > 10) {
+            errors.firstname = 'First name should be <= 10 characters';
+        }
+        if (this.state.touched.lastname && lastname.length < 3) {
+            errors.lastname = 'First name should be >= 3 characters';
+        } else if (this.state.touched.lastname && lastname.length > 10) {
+            errors.lastname = 'Last name should be <= 10 characters';
+        }
+        const reg = /^\d+$/;
+        if (this.state.touched.telnum && !reg.test(telnum)) {
+            errors.telnum = 'Tel. Number should contain only numbers';
+        }
+
+        if (this.state.touched.email && email.split('').filter(x => x === '@').length !== 1) {
+            errors.email = 'Email should contain a "@" sign';
+        }
+        return errors;
+    }
+
     render() {
+        const errors = this.validate(this.state.firstname, this.state.lastname, this.state.telnum, this.state.email);
         return (
             <div className="container">
                 <div className="row">
@@ -56,9 +98,9 @@ class Contact extends Component {
                             121, Clear Water Bay Road<br/>
                             Clear Water Bay, Kowloon<br/>
                             HONG KONG<br/>
-                            <i className="fa fa-phone"></i>: +852 1234 5678<br/>
-                            <i className="fa fa-fax"></i>: +852 8765 4321<br/>
-                            <i className="fa fa-envelope"></i>: <a
+                            <i className="fa fa-phone"/>: +852 1234 5678<br/>
+                            <i className="fa fa-fax"/>: +852 8765 4321<br/>
+                            <i className="fa fa-envelope"/>: <a
                             href="mailto:confusion@food.net">confusion@food.net</a>
                         </address>
                     </div>
@@ -68,10 +110,10 @@ class Contact extends Component {
                     <div className="col-12 col-sm-11 offset-sm-1">
                         <div className="btn-group" role="group">
                             <a role="button" className="btn btn-primary" href="tel:+85212345678"><i
-                                className="fa fa-phone"></i> Call</a>
-                            <a role="button" className="btn btn-info"><i className="fa fa-skype"></i> Skype</a>
+                                className="fa fa-phone"/> Call</a>
+                            <a role="button" className="btn btn-info"><i className="fa fa-skype"/> Skype</a>
                             <a role="button" className="btn btn-success" href="mailto:confusion@food.net"><i
-                                className="fa fa-envelope-o"></i> Email</a>
+                                className="fa fa-envelope-o"/> Email</a>
                         </div>
                     </div>
                 </div>
@@ -86,8 +128,12 @@ class Contact extends Component {
                                         <Input type="text" id="firstname" name="firstname"
                                                placeholder="First Name"
                                                value={this.state.firstname}
+                                               valid={errors.firstname === ''}
+                                               invalid={errors.firstname !== ''}
                                                onChange={this.handleInputChange}
+                                               onBlur={this.handleBlur('firstname')}
                                         />
+                                        <FormFeedback>{errors.firstname}</FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -96,8 +142,12 @@ class Contact extends Component {
                                         <Input type="text" id="lastname" name="lastname"
                                                placeholder="Last Name"
                                                value={this.state.lastname}
+                                               valid={errors.lastname === ''}
+                                               invalid={errors.lastname !== ''}
                                                onChange={this.handleInputChange}
+                                               onBlur={this.handleBlur('lastname')}
                                         />
+                                        <FormFeedback>{errors.lastname}</FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -106,8 +156,12 @@ class Contact extends Component {
                                         <Input type="tel" id="telnum" name="telnum"
                                                placeholder="Tel. Number"
                                                value={this.state.telnum}
+                                               valid={errors.telnum === ''}
+                                               invalid={errors.telnum !== ''}
                                                onChange={this.handleInputChange}
+                                               onBlur={this.handleBlur('telnum')}
                                         />
+                                        <FormFeedback>{errors.telnum}</FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
@@ -116,8 +170,12 @@ class Contact extends Component {
                                         <Input type="email" id="email" name="email"
                                                placeholder="Email"
                                                value={this.state.email}
+                                               valid={errors.email === ''}
+                                               invalid={errors.email !== ''}
                                                onChange={this.handleInputChange}
+                                               onBlur={this.handleBlur('email')}
                                         />
+                                        <FormFeedback>{errors.email}</FormFeedback>
                                     </Col>
                                 </FormGroup>
                                 <FormGroup row>
